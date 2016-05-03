@@ -1,0 +1,91 @@
+/* Space out content a bit */
+body {
+    background-color: #F0F0F0;
+    margin: 0;
+    font-size: 1.25em;
+
+}
+
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.custom-border {
+    background-color: #ffffff;
+    display: block;
+    border: thin solid #E0E0E0;
+    padding: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.logo {
+    background-color: #ffffff;
+    margin-bottom: 10px;
+    border-bottom: thin solid #428bca;
+    display: block;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    clear: both;
+    height: auto;
+}
+
+tr.group {
+    background-color: #337ab7 !important;
+}
+
+td.table-row{
+    font-size: small;
+    color: #ffffff;
+}
+
+.taskboard-title {
+    font-size: 25px;
+    margin-left: 2px;
+    display: inline-block;
+    vertical-align: bottom;
+    color: #424242;
+}
+
+.user-card {
+    list-style-type: none;
+    padding: 0;
+    margin-right: 5px;
+    margin-top: 5px;
+}
+
+.horizontal-list-item {
+    display: inline;
+    margin-right: 15px;
+}
+
+.card {
+    background-color: #F8F8F8;
+}
+
+.card-guidelines {
+    background: #ffffff;
+    border-top: thin #E0E0E0 solid;
+    border-bottom: thin #E0E0E0 solid;
+    display: block;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.patient-name {
+    font-weight: bold;
+}
+
+.patient-details-label {
+    color: gray;
+}
+
+.form-group.required .control-label:after {
+    content: "*";
+    color: red;
+}
+
+a {
+    cursor: pointer;
+}

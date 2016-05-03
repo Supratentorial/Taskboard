@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>Monash Health Taskboard</title>
+    <link rel="icon" type="image/png" href="favicon.png"/>
+    <link rel="SHORTCUT ICON" href="favicon.ico"/>
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="bower_components/datatables/media/css/dataTables.bootstrap.css">
+    <link rel="stylesheet" href="bower_components/toastr/toastr.min.css">
+    <link rel="stylesheet" href="App/css/main.css">
+
+</head>
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+<!--Create task modal dialog-->
+<div class="modal fade" id="newTaskModal" tabindex="-1" role="dialog" data-backdrop="static"
+     data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Create a new task</h4>
+            </div>
+            <div class="modal-body">
+                <form onsubmit="return false">
+                    <div class="form-group" id="URInputGroup">
+                        <label class="control-label" for="inputPatientUR">Patient URN</label>
+
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="inputPatientUR" maxlength="10"
+                                   placeholder="Patient URN"/>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" id="searchPatientButton">
+                                            <span class="glyphicon glyphicon-search"></span> Search
+                                        </button>
+                                    </span>
+                        </div>
+                    </div>
+                </form>
+                <p id="noURLabel">Don't have a URN? <a id="manualEntryLink">Enter details manually</a>.</p>
+                <!--Status text-->
+                <div class="alert alert-warning" style="display: none" role="alert" id="patientNotFoundAlert">
+                    Unable to find patient. Please check the UR number, or enter patient details manually.
+                </div>
+                <!--Patient ID Card-->
+                <table id="patientIDCard" style="display:none" class="table table-bordered card">
+                    <tr>
+                        <td colspan="4"><span class="patient-name" id="patientName"></span></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><span class="patient-details-label">URN </span> <span id="patientUR"></span>
+                        </td>
+                        <td colspan="2"><span class="patient-details-label">Born </span>
+                            <span id="patientDOB"></span> (<span id="patientAge"></span>)
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><span class="patient-details-label">Site  </span> <span id="patientSite"></span></td>
+                        <td><span class="patient-details-label">Ward  </span> <span id="patientWard"></span></td>
+                        <td><span class="patient-details-label">Bed  </span> <span id="patientBed"></span></td>
+                        <td><span class="patient-details-label">Unit  </span> <span id="patientUnit"></span></td>
+                    </tr>
+                </table>
+                <form id="manualEntryForm" style="display:none" novalidate="novalidate" onsubmit="return false">
+                    <div class="row">
+                        <div class="form-group col-sm-6">
+                            <label class="control-label" for="nameInput">Patient name</label>
+                            <input type="text" class="form-control" id="nameInput" placeholder="E.g. Frodo Baggins">
+                        </div>
+                        <div class="form-group required col-sm-6">
+                            <label class="control-label" for="dobInput">DOB</label>
+                            <input type="text" class="form-control" id="dobInput" placeholder="E.g. dd/mm/yyyy">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-sm-4">
+                            <label class="control-label" for="wardInput">Ward</label>
+                            <input type="text" class="form-control" id="wardInput" placeholder="E.g. 44 North">
+                        </div>
+                        <div class="form-group col-sm-4">
+                            <label class="control-label" for="bedInput">Bed</label>
+                            <input type="text" class="form-control" id="bedInput" placeholder="E.g. 8">
+                        </div>
+                        <div class="form-group col-sm-4">
+                            <label class="control-label" for="unitInput">Unit</label>
+                            <input type="text" class="form-control" id="unitInput">
+                        </div>
+                    </div>
+                </form>
+                <form id="taskEntryForm" style="display:none" novalidate="novalidate" onsubmit="return false">
+                    <div class="form-group">
+                        <label class="control-label" for="taskDescription">Task</label>
+                        <input type="text" class="form-control" id="taskDescription" name="taskDescription"
+                               placeholder="E.g. Warfarin order.">
+                    </div>
+                    <div class="form-group">
+                        <label for="backgroundDescription" class="control-label">Background</label>
+                        <input type="text" class="form-control" id="backgroundDescription" name="backgroundDescription"
+                               placeholder="E.g. On warfarin for aortic valve replacement.">
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-sm-6">
+                            <label for="contactNameInput" class="control-label">Contact name</label>
+                            <input type="text" id="contactNameInput" placeholder="E.g. Peregrin Took"
+                                   name="contactNameInput"
+                                   class="form-control">
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label for="contactNumberInput" class="control-label">Contact number</label>
+                            <input type="text" id="contactNumberInput" placeholder="E.g. 44444"
+                                   name="contactNumberInput"
+                                   class="form-control">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="saveTaskButton">
+                    Add Task
+                </button>
+                <button type="reset" class="btn btn-default" id="cancelTaskButton">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="logo">
+    <img src="App/images/MonashHealth33.png" style="border-right: thin #428bca solid;">
+        <span class="taskboard-title">
+            Taskboard<img src="App/images/taskboard.png" style="max-height: 20px;">
+        </span>
+    <ul class="user-card pull-right">
+        <li>Welcome, <span id="userName">Samwise Gamgee</span></li>
+        <li class="horizontal-list-item">
+            <a id="helpLink"><span class="glyphicon glyphicon-info-sign"></span> Help</a>
+        </li>
+        <li class="horizontal-list-item">
+            <a id="logOutLink" href="?cmd=logout">
+                <span class="glyphicon glyphicon-log-out"></span> Log out
+            </a>
+        </li>
+        <li class="horizontal-list-item">
+            <a id="feedbackLink">
+                <span class="glyphicon glyphicon-envelope"></span>
+                Feedback
+            </a>
+        </li>
+    </ul>
+</div>
+<div class="card-guidelines">
+    <ul>
+        <li>Taskboard is a way of communicating with the cover doctors after hours</li>
+        <li>Only to be used for non-urgent tasks, i.e intravenous cannula</li>
+        <li>Not to be used if immediate review by a doctor is required (e.g. chest pain, low urine output)</li>
+        <li>Taskboard does not communicate to the pagers - checked 30-60 minutely</li>
+    </ul>
+</div>
+<div class="container-fluid">
+    <button class="btn btn-primary" data-toggle="modal" data-target="#newTaskModal">
+        <span class="glyphicon glyphicon-plus"></span> New Task
+    </button>
+
+    <button class="btn btn-primary"><span class="glyphicon glyphicon-refresh"></span> Refresh</button>
+
+
+</div>
+
+
+<div class="custom-border">
+    <form class="form-inline">
+        <div class="form-group">
+            <label class="control-label" for="selectSite"> Site:</label>
+            <select id="selectSite" class="form-control">
+                <option value="C">Clayton</option>
+                <option value="D">Dandenong</option>
+                <option value="B">Casey</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label" for="searchcover">Cover:</label>
+            <select id="searchcover" class="form-control">
+                <option value="">All</option>
+                <option value="Front">Front</option>
+                <option value="Back">Back</option>
+                <option value="Surgical">Surgical</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label" for="unitFilter">Unit:</label>
+            <select id="unitFilter" name="unitFilter" class="form-control">
+                <option value="All">All</option>
+                <option value="Cardiology">Cardiology</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label" for="wardFilter">Ward:</label>
+            <select class="form-control" id="wardFilter" name="wardFilter">
+                <option value="All">All</option>
+                <option value="33 North">33 North</option>
+            </select>
+        </div>
+
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" id="hideCompletedTasksCheckBox"> Show Completed Tasks
+            </label>
+        </div>
+    </form>
+    <table id="taskDataTable" class="table table-striped table-bordered" width="100%"></table>
+</div>
+
+<!--Scripts-->
+<script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript" src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="bower_components/jquery-validation/dist/jquery.validate.min.js"></script>
+<script type="text/javascript" src="bower_components/moment/min/moment.min.js"></script>
+<script type="text/javascript" src="App/js/taskboard.js"></script>
+<script type="text/javascript" src="bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="bower_components/datatables/media/js/dataTables.bootstrap.js"></script>
+<script type="text/javascript" src="bower_components/toastr/toastr.min.js"></script>
+
+</body>
+</html>

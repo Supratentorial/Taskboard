@@ -45,3 +45,11 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+
+bower_components/
+packages/
+bin/
+obj/
+.idea/
+.vs/
+Migrations/

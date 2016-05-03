@@ -1,0 +1,22 @@
+{
+  "name": "taskboard",
+  "version": "0.0.0",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.2",
+    "jasmine": "~2.2.1",
+    "datatables": "~1.10.5",
+    "jquery-validation": "~1.13.1",
+    "jquery": "~2.1.3",
+    "toastr": "~2.1.0",
+    "moment": "~2.9.0"
+  }
+}
